@@ -44,3 +44,32 @@ Group by first_name+' '+last_name
 Order by Sales DESC
 
 
+-- Order Count per Customer by Age 
+Select 
+		C.customer_key,
+		Datediff(year, C.birth_date, GETDATE()) -
+		CASE 
+				WHEN DATEADD(YEAR, DATEDIFF(YEAR, C.birth_date,  GETDATE()), C.birth_date) > GETDATE()
+				THEN 1
+				ELSE 0
+		END AS Age,
+		COUNT(S.order_number) AS orders
+From Gold.dim_customers C
+JOIN Gold.fact_sales S
+		ON C.customer_key = S.customer_key
+Group by
+		C.customer_key,
+		C.birth_date
+Order by customer_key ASC
+
+
+-- Order Count per Customer by Gender
+Select 
+		C.gender,
+		COUNT(S.order_number) AS orders
+From Gold.dim_customers C
+LEFT JOIN Gold.fact_sales S
+		ON C.customer_key = S.customer_key
+Group by gender
+Order by orders DESC
+
