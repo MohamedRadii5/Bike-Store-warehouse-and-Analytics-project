@@ -73,3 +73,34 @@ LEFT JOIN Gold.fact_sales S
 Group by gender
 Order by orders DESC
 
+
+-- Category Sales
+SELECT 
+		P.category,
+		SUM(S.price) AS Total_Sales
+FROM Gold.dim_products P
+JOIN Gold.fact_sales S
+ON P.product_key = S.product_key
+Group by category
+Order By Total_Sales DESC
+
+-- Sub Category Sales
+SELECT 
+		P.subcategory,
+		SUM(S.price) AS Total_Sales
+FROM Gold.dim_products P
+JOIN Gold.fact_sales S
+ON P.product_key = S.product_key
+Group by subcategory
+Order By Total_Sales DESC
+
+-- Top 15 Products 
+SELECT TOP 15
+		DENSE_RANK() Over (Order by SUM(S.price) DESC) AS Rank,
+		P.product_name,
+		SUM(S.price) AS Total_Sales
+FROM Gold.dim_products P
+JOIN Gold.fact_sales S
+		ON P.product_key = S.product_key
+Group by product_name
+ORDER BY Total_Sales DESC;
